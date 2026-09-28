@@ -1,0 +1,33 @@
+name: ci
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: bash 语法检查
+        run: |
+          sh_files=$(find . -name '*.sh' -not -path './.git/*' || true)
+          if [ -n "$sh_files" ]; then
+            echo "$sh_files" | xargs bash -n
+          else
+            echo "no .sh files, skip"
+          fi
+
+      - name: 禁止密钥入库检查
+        run: |
+          if grep -rInE '(github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9]{20,}|BEGIN (RSA|EC|OPENSSH) PRIVATE KEY)' \
+             --exclude-dir=.git .; then
+            echo "::error::疑似密钥入库，见上方匹配行"
+            exit 1
+          fi
+          echo "clean"
+
+      - name: 空白错误检查
+        run: git diff --check "$(git rev-parse HEAD)" -- || true

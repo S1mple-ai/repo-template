@@ -1,0 +1,23 @@
+# 密钥与凭证（红线：永不入库）
+.env
+.env.*
+secrets/
+*.key
+*.pem
+*.pfx
+*.p12
+
+# 依赖与构建产物
+node_modules/
+__pycache__/
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+
+# 日志与临时文件
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
